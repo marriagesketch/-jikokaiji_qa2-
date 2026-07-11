@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>婚活自己開示QA Part2</title>
+
+<link rel="stylesheet" href="style.css"/>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+/* ============================================================
+   ビューモード（共有リンクで開いたとき）
+   ============================================================ */
+
+#viewMode {
+  display: none;
+}
+
+/* ============================================================
+   状態表示（共有リンク読み込み中・エラー時）
+   ============================================================ */
+
+.state-card{
+  text-align:center;
+}
+
+.state-text{
+  margin:0;
+  font-size:14px;
+  line-height:1.8;
+  color:#666;
+}
+
+.state-spinner{
+  width:30px;
+  height:30px;
+  margin:0 auto 12px;
+}
+
+.state-spinner img{
+  width:30px;
+  height:30px;
+  display:none;
+}
+
+.state-spinner .spinner-light{
+  display:block;
+}
+
+@media (prefers-color-scheme: dark){
+  .state-spinner .spinner-light{ display:none; }
+  .state-spinner .spinner-dark{ display:block; }
+}
+
+.view-header {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.view-label {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #d96c7d;
+  letter-spacing: 0.05em;
+}
+
+.view-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #444;
+}
+
+.view-item {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.view-question {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d96c7d;
+  line-height: 1.6;
+}
+
+.view-answer {
+  margin: 0;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ============================================================
+   共有画面 下部CTA（あなたの価値観も共有してみませんか？）
+   ============================================================ */
+
+.cta-card{
+  position: relative;
+  margin-top: 24px;
+  padding: 24px;
+  background: linear-gradient(135deg, #fff9fa 0%, #ffeef1 100%);
+  border: 2px dashed #f4b8c5;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-align: left;
+}
+
+.cta-image-left{
+  flex: 0 0 25%;
+  width: 25%;
+  max-width: 140px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.cta-content{
+  flex: 1;
+  min-width: 0;
+}
+
+.cta-title{
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #d96c7d;
+}
+
+.cta-text{
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #555;
+}
+
+.cta-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  background: #f48ca0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(244,140,160,.35);
+}
+
+.cta-arrow{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  font-size: 14px;
+  line-height: 1;
+}
+
+@media (max-width: 480px){
+  .cta-card{
+    flex-direction: column;
+    text-align: center;
+  }
+  .cta-image-left{
+    width: 45%;
+    flex: 0 0 auto;
+  }
+  .cta-title{ font-size: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="form-header">
+
+<h1>婚活 自己開示QA Part2</h1>
+
+<p class="form-description">
+本アンケートは、婚活・交際前の自己開示を目的としています。<br>
+プライバシー保護: LINE IDはハッシュ化 (暗号化) して保存されます。表示名・プロフィール画像・メールアドレスなどは取得されません。<br>
+再回答について: 同じLINEアカウントから回答された場合、以前の内容は上書きされます。
+</p>
+
+</div>
+
+<!-- ビューモード表示エリア（共有リンクで開いたとき） -->
+<div id="viewMode"></div>
+
+<!-- Q1 -->
+
+<label>Q1 タイムスリップができるなら過去と未来どちらに行きたいですか?</label>
+
+<label>
+<input type="radio" name="q1" value="past">
+過去
+</label>
+
+<label>
+<input type="radio" name="q1" value="future">
+未来
+</label>
+
+<!-- Q2 -->
+
+<label>Q2 子どもの頃、兄弟げんかや親子げんかはする方でしたか?</label>
+
+<label>
+<input type="radio" name="q2" value="a2-1">
+毎日のようにしていた、時々手が出ることもあった
+</label>
+
+<label>
+<input type="radio" name="q2" value="a2-2">
+毎日のようにしていたが口喧嘩のみ
+</label>
+
+<label>
+<input type="radio" name="q2" value="a2-3">
+たまにしていた、時々手が出ることもあった
+</label>
+
+<label>
+<input type="radio" name="q2" value="a2-4">
+たまにしていたが口喧嘩のみ
+</label>
+
+<label>
+<input type="radio" name="q2" value="a2-5">
+年に1~2回程度していた
+</label>
+
+<label>
+<input type="radio" name="q2" value="a2-6">
+喧嘩した記憶がない、ほとんどない
+</label>
+
+<!-- Q3 -->
+
+<label>
+Q3 旅行は計画立てて行くのが好きですか？行き当たりばったりがいいですか？
+</label>
+
+<label>
+<input type="radio" name="q3" value="a3-1">
+行き当たりばったりがいい
+</label>
+
+<label>
+<input type="radio" name="q3" value="a3-2">
+周りの計画に乗っかることが多い
+</label>
+
+<label>
+<input type="radio" name="q3" value="a3-3">
+あらかじめ調べて決めておくのが楽しい
+</label>
+
+<!-- Q4 -->
+
+<label>
+Q4 旅行中やデート中の別行動はしても平気なタイプですか？
+</label>
+
+<label>
+<input type="radio" name="q4" value="a4-1">
+別行動はしたくない
+</label>
+
+<label>
+<input type="radio" name="q4" value="a4-2">
+目の届く範囲内なら良い（たとえば同じフロア内の少し離れた展示を見るなど）
+</label>
+
+<label>
+<input type="radio" name="q4" value="a4-3">
+同じ施設内なら目の届かない距離でも良い
+</label>
+
+<label>
+<input type="radio" name="q4" value="a4-4">
+数時間以内なら時間を決めて別行動でも構わない
+</label>
+
+<label>
+<input type="radio" name="q4" value="a4-5">
+2泊以上の旅行で丸一日別行動の日があっても構わない
+</label>
+
+<!-- Q5 -->
+
+<label>
+Q5 1年後までに個人的にしたいことはありますか?
+</label>
+
+<textarea id="q5"></textarea>
+
+<!-- Q6 -->
+
+<label>
+Q6 5年後までに個人的にしたいことはありますか?
+</label>
+
+<textarea id="q6"></textarea>
+
+<!-- Q7 -->
+
+<label>
+Q7 定年退職後ぐらいの年齢で個人的にしたいことはありますか?
+</label>
+
+<textarea id="q7"></textarea>
+
+<!-- Q8 -->
+
+<label>
+Q8 もし宝くじ3億円が当たったらどうしますか? 次の選択肢の中で選んでください。
+</label>
+
+<label>
+<input type="radio" name="q8" value="a8-1">
+仕事をやめ(セミFIRE含む) 当選金額で生活する
+</label>
+
+<label>
+<input type="radio" name="q8" value="a8-2">
+大きな金額のものを買う
+</label>
+
+<label>
+<input type="radio" name="q8" value="a8-3">
+すぐには生活を変えずに貯めておく
+</label>
+
+<label>
+<input type="radio" name="q8" value="a8-4">
+寄付する
+</label>
+
+<!-- Q9 -->
+
+<label>
+Q9 業績不振により給料が減ることになってしまいました。<br>
+次の中で支出を削ってもいいと思う順番を教えてください。<br>
+転職など給料を上げる形での解決策は考えずに、お答えください。<br>
+ただし引越しなど実際にはすぐには実行できない、一時的にむしろ支出が増えるものもありますが、ここではそれも考慮せずにあくまで優先順位を単純に答えてください。<br>
+（タップした順番が順位になります）
+</label>
+
+<div id="q9Ranking" class="ranking-group">
+
+<button type="button" class="rank-option" data-value="家賃">
+<span class="rank-number"></span>
+家賃
+</button>
+
+<button type="button" class="rank-option" data-value="食費">
+<span class="rank-number"></span>
+食費
+</button>
+
+<button type="button" class="rank-option" data-value="会社での飲み会代">
+<span class="rank-number"></span>
+会社での飲み会代
+</button>
+
+<button type="button" class="rank-option" data-value="友人との食事代、飲み会代">
+<span class="rank-number"></span>
+友人との食事代、飲み会代
+</button>
+
+<button type="button" class="rank-option" data-value="旅行代">
+<span class="rank-number"></span>
+旅行代
+</button>
+
+<button type="button" class="rank-option" data-value="プレゼント代">
+<span class="rank-number"></span>
+プレゼント代
+</button>
+
+<button type="button" class="rank-option" data-value="衣服や美容にかけるお金">
+<span class="rank-number"></span>
+衣服や美容にかけるお金
+</button>
+
+<button type="button" class="rank-option" data-value="動画配信などのサブスク代">
+<span class="rank-number"></span>
+動画配信などのサブスク代
+</button>
+
+<button type="button" class="rank-option" data-value="その他趣味に使うお金">
+<span class="rank-number"></span>
+その他趣味に使うお金
+</button>
+
+<button type="button" class="rank-option" data-value="その他">
+<span class="rank-number"></span>
+その他
+</button>
+
+</div>
+
+<!-- Q10 -->
+
+<label>
+Q10 これだけは苦手または生理的に受け付けないというシチュエーションや他人の言動はありますか？
+</label>
+
+<textarea id="q10"></textarea>
+
+<!-- Q11 -->
+
+<label>
+Q11 次の愛情表現について、嬉しい順に選択してください。<br>
+（タップした順番が順位になります）
+</label>
+
+<div id="q11Ranking" class="ranking-group">
+
+<button type="button" class="rank-option" data-value="会う頻度、連絡頻度が多い">
+<span class="rank-number"></span>
+会う頻度、連絡頻度が多い
+</button>
+
+<button type="button" class="rank-option" data-value="誉め言葉や感謝の言葉をたくさんくれる">
+<span class="rank-number"></span>
+誉め言葉や感謝の言葉をたくさんくれる
+</button>
+
+<button type="button" class="rank-option" data-value="プレゼント">
+<span class="rank-number"></span>
+プレゼント
+</button>
+
+<button type="button" class="rank-option" data-value="私がお願いしたことを手伝ってくれる">
+<span class="rank-number"></span>
+私がお願いしたことを手伝ってくれる
+</button>
+
+<button type="button" class="rank-option" data-value="スキンシップ">
+<span class="rank-number"></span>
+スキンシップ
+</button>
+
+</div>
+
+<!-- Q12 -->
+
+<label>
+Q12 デートや日常生活のなかでパートナーからなんて褒められるのが嬉しいですか？次のなかで嬉しい順に選択してください。<br>
+（タップした順番が順位になります）
+</label>
+
+<div id="q12Ranking" class="ranking-group">
+
+<button type="button" class="rank-option" data-value="容姿の中で、身長や寝起きの顔など生まれつきの要素に関して褒めてくれる">
+<span class="rank-number"></span>
+容姿の中で、身長や寝起きの顔など生まれつきの要素に関して褒めてくれる
+</button>
+
+<button type="button" class="rank-option" data-value="容姿の中で、体型や髪型、服装などある程度自身で変えられるところに関して褒めてくれる">
+<span class="rank-number"></span>
+容姿の中で、体型や髪型、服装などある程度自身で変えられるところに関して褒めてくれる
+</button>
+
+<button type="button" class="rank-option" data-value="優しい">
+<span class="rank-number"></span>
+優しい
+</button>
+
+<button type="button" class="rank-option" data-value="おもしろい">
+<span class="rank-number"></span>
+おもしろい
+</button>
+
+<button type="button" class="rank-option" data-value="頭がいい、博識">
+<span class="rank-number"></span>
+頭がいい、博識
+</button>
+
+<button type="button" class="rank-option" data-value="お店選びや買い物などのセンスがいい">
+<span class="rank-number"></span>
+お店選びや買い物などのセンスがいい
+</button>
+
+<button type="button" class="rank-option" data-value="気が利く、思いやりがある">
+<span class="rank-number"></span>
+気が利く、思いやりがある
+</button>
+
+<button type="button" class="rank-option" data-value="仕事など個人的な努力について褒めてくれる">
+<span class="rank-number"></span>
+仕事など個人的な努力について褒めてくれる
+</button>
+
+<button type="button" class="rank-option" data-value="「作った料理がおいしい」など2人での生活のために頑張ったことについて褒めてくれる">
+<span class="rank-number"></span>
+「作った料理がおいしい」など2人での生活のために頑張ったことについて褒めてくれる
+</button>
+
+<button type="button" class="rank-option" data-value="「生きているだけで偉い」のようにとにかく何でも褒めてくれる">
+<span class="rank-number"></span>
+「生きているだけで偉い」のようにとにかく何でも褒めてくれる
+</button>
+
+</div>
+
+<div class="button-group">
+
+<button id="submitBtn" type="button">
+送信
+</button>
+
+<div class="sub-buttons">
+
+<button id="draftBtn" type="button">
+下書き保存
+</button>
+
+<button id="clearBtn" type="button">
+フォームクリア
+</button>
+
+</div>
+
+</div>
+
+<!-- 共有モーダル -->
+
+<div id="shareModal" class="modal hidden">
+
+<div class="modal-content">
+
+<h3>共有</h3>
+
+<input
+id="shareName"
+placeholder="お名前を入力してください(任意)"
+>
+
+<button id="shareBtn">
+共有する
+</button>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</div>
+
+</body>
+</html>
