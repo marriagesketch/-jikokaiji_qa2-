@@ -30,12 +30,14 @@ var COL = {
 // ※ q6（5年後までにしたいこと）はスプレッドシートに列自体が存在しない
 //   ため現状は書き込んでいません（他の自由記述q5/q7/q10は列があるため
 //   含めています。意図的な除外でなければ列を追加してください）。
+// 実際のシート列順: id, ownerHash, viewerHash, createdAt,
+// serious_relationship_status, partner_hash, serious_relationship_started_at, serious_relationship_ended_at,
+// q1, q2, q3, q4, q5, q7, q8, q9, q10, q11, q12
 var ACOL = {
   ID: 1, OWNER_HASH: 2, VIEWER_HASH: 3, CREATED_AT: 4,
-  Q1: 5, Q2: 6, Q3: 7, Q4: 8, Q5: 9, Q7: 10, Q8: 11, Q9: 12, Q10: 13, Q11: 14, Q12: 15,
-  // ↓ 真剣交際パートナー機能追加分（末尾に追加。既存データには影響しない）
-  SERIOUS_RELATIONSHIP_STATUS: 16, PARTNER_HASH: 17,
-  SERIOUS_RELATIONSHIP_STARTED_AT: 18, SERIOUS_RELATIONSHIP_ENDED_AT: 19
+  SERIOUS_RELATIONSHIP_STATUS: 5, PARTNER_HASH: 6,
+  SERIOUS_RELATIONSHIP_STARTED_AT: 7, SERIOUS_RELATIONSHIP_ENDED_AT: 8,
+  Q1: 9, Q2: 10, Q3: 11, Q4: 12, Q5: 13, Q7: 14, Q8: 15, Q9: 16, Q10: 17, Q11: 18, Q12: 19
 };
 
 var DATA_START_ROW = 2; // 1行目=見出し, 2行目以降がデータ
@@ -162,10 +164,10 @@ function handleShare(body) {
 
     analyticsSheet.appendRow([
       id, ownerHash, '', now,
+      '', '', '', '', // SERIOUS_RELATIONSHIP_STATUS / PARTNER_HASH / STARTED_AT / ENDED_AT（初期値は空）
       analytics.q1 || '', analytics.q2 || '', analytics.q3 || '', analytics.q4 || '',
       analytics.q5 || '', analytics.q7 || '', analytics.q8 || '',
-      analytics.q9 || '', analytics.q10 || '', analytics.q11 || '', analytics.q12 || '',
-      '', '', '', '' // SERIOUS_RELATIONSHIP_STATUS / PARTNER_HASH / STARTED_AT / ENDED_AT（初期値は空）
+      analytics.q9 || '', analytics.q10 || '', analytics.q11 || '', analytics.q12 || ''
     ]);
 
     return jsonResponse({ ok: true, id: id });
