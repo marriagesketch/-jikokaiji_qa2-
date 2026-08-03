@@ -14,6 +14,25 @@ const DRAFT_KEY = "konkatsu_qa_part2_draft";
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycby68Ftif3vL0zULDk0kuP55jsIWCs5EcIFJr_sEz2f4X6NVZTJ4-4wzie04zTbR4TvA/exec";
 
 /* ============================================================
+   ワンポイントアドバイス（各質問の下に表示。回答欄ではなく案内文のみ）
+   ============================================================ */
+const Q_ADVICE = {
+  q1:  "なぜそちらに行きたいのか、理由も聞いてみましょう",
+  q2:  "喧嘩したあとはどうやって仲直りしていたかも聞いてみましょう",
+  q3:  "旅行先を決めるときに一番重視するポイントも聞いてみましょう",
+  q4:  "別行動のとき、何をして過ごすことが多いかも聞いてみましょう",
+  q5:  "それを実現するために今取り組んでいることがあるか聞いてみましょう",
+  q6:  "5年後、仕事はどんな状態でありたいかも聞いてみましょう",
+  q7:  "定年後、どこに住んでいたいかも聞いてみましょう",
+  q8:  "その使い道を選んだ理由も聞いてみましょう",
+  q9:  "逆に最後まで削りたくないものは何か聞いてみましょう",
+  q10: "そう感じるようになったきっかけがあれば聞いてみましょう",
+  q11: "1位に選んだ愛情表現を、普段どんな形でしてほしいか聞いてみましょう",
+  q12: "逆にどんな褒め方をされると微妙な気持ちになるか聞いてみましょう",
+};
+
+
+/* ============================================================
    Base64URL 変換ユーティリティ（AES鍵・暗号文の符号化に使用）
    ============================================================ */
 function bufToBase64Url(buf) {
@@ -537,26 +556,26 @@ function renderViewMode(data, options = {}) {
 
   const rows = [
     { q: "Q1 タイムスリップができるなら過去と未来どちらに行きたいですか？",
-      a: q1Labels[data.q1] || "未回答" },
+      a: q1Labels[data.q1] || "未回答", tip: Q_ADVICE.q1 },
     { q: "Q2 子どもの頃、兄弟げんかや親子げんかはする方でしたか？",
-      a: q2Labels[data.q2] || "未回答" },
+      a: q2Labels[data.q2] || "未回答", tip: Q_ADVICE.q2 },
     { q: "Q3 旅行は計画立てて行くのが好きですか？行き当たりばったりがいいですか？",
-      a: q3Labels[data.q3] || "未回答" },
+      a: q3Labels[data.q3] || "未回答", tip: Q_ADVICE.q3 },
     { q: "Q4 旅行中やデート中の別行動はしても平気なタイプですか？",
-      a: q4Labels[data.q4] || "未回答" },
-    { q: "Q5 1年後までに個人的にしたいことはありますか？", a: data.q5 || "未回答" },
-    { q: "Q6 5年後までに個人的にしたいことはありますか？", a: data.q6 || "未回答" },
-    { q: "Q7 定年退職後ぐらいの年齢で個人的にしたいことはありますか？", a: data.q7 || "未回答" },
+      a: q4Labels[data.q4] || "未回答", tip: Q_ADVICE.q4 },
+    { q: "Q5 1年後までに個人的にしたいことはありますか？", a: data.q5 || "未回答", tip: Q_ADVICE.q5 },
+    { q: "Q6 5年後までに個人的にしたいことはありますか？", a: data.q6 || "未回答", tip: Q_ADVICE.q6 },
+    { q: "Q7 定年退職後ぐらいの年齢で個人的にしたいことはありますか？", a: data.q7 || "未回答", tip: Q_ADVICE.q7 },
     { q: "Q8 もし宝くじ3億円が当たったらどうしますか？",
-      a: q8Labels[data.q8] || "未回答" },
+      a: q8Labels[data.q8] || "未回答", tip: Q_ADVICE.q8 },
     { q: "Q9 業績不振により給料が減ることになった場合、支出を削ってもいいと思う順番",
-      html: rankingListHTML(data.q9) },
+      html: rankingListHTML(data.q9), tip: Q_ADVICE.q9 },
     { q: "Q10 これだけは苦手または生理的に受け付けないというシチュエーションや他人の言動はありますか？",
-      a: data.q10 || "未回答" },
+      a: data.q10 || "未回答", tip: Q_ADVICE.q10 },
     { q: "Q11 次の愛情表現について、嬉しい順",
-      html: rankingListHTML(data.q11) },
+      html: rankingListHTML(data.q11), tip: Q_ADVICE.q11 },
     { q: "Q12 デートや日常生活のなかでパートナーからなんて褒められるのが嬉しいですか？",
-      html: rankingListHTML(data.q12) },
+      html: rankingListHTML(data.q12), tip: Q_ADVICE.q12 },
   ];
 
   hideFormElements();
@@ -596,10 +615,16 @@ function renderViewMode(data, options = {}) {
     </div>
     ` : ""}
 
-    ${rows.map(({ q, a, html }) => `
+    ${rows.map(({ q, a, html, tip }) => `
       <div class="view-item">
         <p class="view-question">${escapeHTML(q)}</p>
         <p class="view-answer">${html ? html : escapeHTML(a).replace(/\n/g, "<br>")}</p>
+        ${tip ? `
+        <div class="view-tip">
+          <span class="view-tip-icon">💡</span>
+          <p class="view-tip-text"><strong>あわせて聞いてみましょう：</strong><br>${escapeHTML(tip).replace(/\n/g, "<br>")}</p>
+        </div>
+        ` : ""}
       </div>
     `).join("")}
 
