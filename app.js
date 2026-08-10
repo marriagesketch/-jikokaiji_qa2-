@@ -845,8 +845,12 @@ async function checkFriendship() {
     return;
   }
 
-  /* ----- 友だち追加チェック（未追加なら追加ダイアログを表示） ----- */
-  await checkFriendship();
+  /* ----- 友だち追加チェック（未追加なら追加ダイアログを表示） -----
+     liff.getFriendship() / requestFriendship() はLINEサーバーへの通信を
+     伴うため、ここをawaitすると電波が悪い時に画面表示自体が止まって
+     しまう。必須の処理ではないので、裏側で実行させて画面構築は
+     先に進める（fire-and-forget）。 */
+  checkFriendship();
 
   /* ----- ランキングUIの初期化 ----- */
   setupRankingGroup("q9Ranking");
