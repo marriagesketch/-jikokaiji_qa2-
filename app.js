@@ -9,6 +9,7 @@
 
 const LIFF_ID   = "2010671882-cTeAaHqU";
 const DRAFT_KEY = "konkatsu_qa_part2_draft";
+const PENDING_SHARED_VIEW_KEY = "konkatsu_qa_part2_pending_shared_view";
 
 // ▼▼▼ デプロイ済みGAS Web AppのURL ▼▼▼
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycby68Ftif3vL0zULDk0kuP55jsIWCs5EcIFJr_sEz2f4X6NVZTJ4-4wzie04zTbR4TvA/exec";
@@ -460,6 +461,13 @@ async function handleSharedView(id) {
   }
 
   if (!liff.isLoggedIn()) {
+    // LINEログイン画面へ遷移する前に、共有リンク情報（id・復号鍵）を
+    // sessionStorageへ退避しておく。ログイン往復後にURLの
+    // ?id=...#鍵 が正しく復元されないブラウザ・状況があり、その場合に
+    // 自分の回答フォーム側へ誤って遷移してしまう不具合の対策。
+    try {
+      sessionStorage.setItem(PENDING_SHARED_VIEW_KEY, location.href);
+    } catch (_) {}
     liff.login();
     return;
   }
@@ -834,7 +842,28 @@ async function checkFriendship() {
   }
 
   /* ----- 共有リンク判定（?id=... が付いている場合） ----- */
-  const sharedId = new URLSearchParams(location.search).get("id");
+  /* ----- 共有リンク判定（?id=... が付いている場合） -----
+     LINEログインへのリダイレクトを経由した直後は、ブラウザや状況に
+     よってURLの ?id=...#鍵 が正しく復元されないことがある。その場合は
+     handleSharedView側でliff.login()前にsessionStorageへ退避しておいた
+     URLから復元する（フォールバック）。 */
+  let sharedId = new URLSearchParams(location.search).get("id");
+  if (!sharedId) {
+    try {
+      const pending = sessionStorage.getItem(PENDING_SHARED_VIEW_KEY);
+      if (pending) {
+        const pendingURL = new URL(pending);
+        const pendingId = new URLSearchParams(pendingURL.search).get("id");
+        if (pendingId) {
+          sharedId = pendingId;
+          const restoredHash = location.hash || pendingURL.hash;
+          history.replaceState(null, "", location.pathname + pendingURL.search + restoredHash);
+        }
+      }
+    } catch (_) {}
+  }
+  try { sessionStorage.removeItem(PENDING_SHARED_VIEW_KEY); } catch (_) {}
+
   if (sharedId) {
     await handleSharedView(sharedId);
     return;
