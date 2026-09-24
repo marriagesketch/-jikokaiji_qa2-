@@ -744,7 +744,7 @@ function escapeHTML(str) {
      画像は1MB以下を推奨。webpの透過部分はそのまま送ると
      反映されない場合があるため、白背景に合成したJPEGを使用する。
    ------------------------------------------------------------ */
-const HEADER_IMAGE_URL = "https://marriagesketch.github.io/-jikokaiji_qa2-/image_message.jpg"; 
+const SHARETARGETPICKER_IMAGE_URL = "https://marriagesketch.github.io/-jikokaiji_qa2-/sharetargetpicker.jpg"; 
 
 function buildShareFlexMessage(shareName, shareURL) {
   const nameLine = shareName ? `${shareName}さんの回答が届きました` : "回答が届きました";
@@ -756,7 +756,7 @@ function buildShareFlexMessage(shareName, shareURL) {
       type: "bubble",
       hero: {
         type: "image",
-        url: HEADER_IMAGE_URL,
+        url: SHARETARGETPICKER_IMAGE_URL,
         size: "full",
         aspectRatio: "3:2",
         aspectMode: "cover"
