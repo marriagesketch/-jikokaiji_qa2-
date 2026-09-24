@@ -322,6 +322,7 @@ label:has(input[type="radio"]){
     font-size:14px;
     line-height:1.5;
   }
+}
 
 /********************************
  * スクショ抑止用ウォーターマーク
@@ -343,6 +344,5 @@ label:has(input[type="radio"]){
 
 #screenshotWatermark.show{
   display:block;
-}
 }
 
