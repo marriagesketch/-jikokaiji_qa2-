@@ -638,7 +638,7 @@ function renderViewMode(data, options = {}) {
       <div class="cta-content">
         <h3 class="cta-title">あなたの価値観も共有してみませんか？</h3>
         <p class="cta-text">
-          恋活・婚活・交際前の自己開示は、<br>
+          交際前・交際中の自己開示は、<br>
           お互いを知る大切なきっかけになります。<br>
           あなたの考えや価値観をアンケートで伝えてみましょう。
         </p>
