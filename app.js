@@ -1,5 +1,5 @@
 /* ============================================================
-   婚活自己開示QA Part2 – app.js
+   恋活・婚活自己開示QA Part2 – app.js
    ------------------------------------------------------------
    共有リンクは「id（短いランダムID）＋復号鍵（URLのフラグメント）」
    のみで構成される。回答本体は暗号化されたうえで GAS 経由で
@@ -638,7 +638,7 @@ function renderViewMode(data, options = {}) {
       <div class="cta-content">
         <h3 class="cta-title">あなたの価値観も共有してみませんか？</h3>
         <p class="cta-text">
-          婚活・交際前の自己開示は、<br>
+          恋活・婚活・交際前の自己開示は、<br>
           お互いを知る大切なきっかけになります。<br>
           あなたの考えや価値観をアンケートで伝えてみましょう。
         </p>
@@ -752,7 +752,7 @@ function buildShareFlexMessage(shareName, shareURL) {
 
   return {
     type: "flex",
-    altText: `婚活 自己開示QA Part2 - ${nameLine}`,
+    altText: `恋活・婚活 自己開示QA Part2 - ${nameLine}`,
     contents: {
       type: "bubble",
       hero: {
@@ -768,7 +768,7 @@ function buildShareFlexMessage(shareName, shareURL) {
         spacing: "md",
         paddingAll: "20px",
         contents: [
-          { type: "text", text: "婚活 自己開示QA Part2", size: "xs", weight: "bold", color: "#d96c7d" },
+          { type: "text", text: "恋活・婚活 自己開示QA Part2", size: "xs", weight: "bold", color: "#d96c7d" },
           { type: "text", text: nameLine, size: "lg", weight: "bold", wrap: true, margin: "sm" },
           { type: "text", text: "ボタンから回答内容を確認できます。", size: "sm", color: "#888888", wrap: true, margin: "md" }
         ]
@@ -839,7 +839,7 @@ async function checkFriendship() {
 
 /* ============================================================
    複数アプリ一括下書き移行チェーン 受け取り処理
-   （婚活すり合わせシリーズ 5サイト共通スニペット。中身は全サイト同一）
+   （恋活・婚活すり合わせシリーズ 5サイト共通スニペット。中身は全サイト同一）
    ============================================================ */
 (function () {
   const params = new URLSearchParams(location.search);
@@ -1038,8 +1038,8 @@ async function checkFriendship() {
       const shareURL = `${base}?id=${id}#${keyBase64}`;
 
       const previewMsg = shareName
-        ? `${shareName}さんの婚活　自己開示QA part2の回答が届きました。\n回答をみる→${shareURL}`
-        : `婚活　自己開示QA part2の回答が届きました。\n回答をみる→${shareURL}`;
+        ? `${shareName}さんの恋活・婚活　自己開示QA part2の回答が届きました。\n回答をみる→${shareURL}`
+        : `恋活・婚活　自己開示QA part2の回答が届きました。\n回答をみる→${shareURL}`;
 
       const flexMessage = buildShareFlexMessage(shareName, shareURL);
 
